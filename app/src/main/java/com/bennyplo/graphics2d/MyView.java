@@ -30,7 +30,7 @@ public class MyView extends View {
         redPaint.setColor(0xffff0000);//color red
         redPaint.setStrokeWidth(5);//set the line stroke width to 5
 
-        LinearGradient linearGradient = new LinearGradient(50,300,240,420, Color.BLUE, Color.RED, Shader.TileMode.MIRROR) ;
+        LinearGradient linearGradient = new LinearGradient(50,300,180,340, Color.BLUE, Color.RED, Shader.TileMode.MIRROR) ;
 
         bluePaint = new Paint(Paint.ANTI_ALIAS_FLAG) ;
         bluePaint.setStyle(Paint.Style.FILL_AND_STROKE);
@@ -71,7 +71,7 @@ public class MyView extends View {
         return result ;
     }
 
-    protected Point[] translate(Point[] oldpoint, int px, int py){
+    protected Point[] translate(Point[] oldpoint, double px, double py){
         double[][] matrix = new double[3][3] ;
         matrix[0][0] = 1;
         matrix[0][1] = 0;
@@ -86,7 +86,50 @@ public class MyView extends View {
         return AffineTransformation(oldpoint,matrix) ;
     }
 
+    protected Point[] rotate(Point[] oldpoint,double angle){
+        double[][] matrix = new double[3][3] ;
+        matrix[0][0] = Math.cos(Math.toRadians(angle));
+        matrix[0][1] = -1*Math.sin(Math.toRadians(angle));
+        matrix[0][2] = 0;
+        matrix[1][0] = Math.sin(Math.toRadians(angle));
+        matrix[1][1] = Math.cos(Math.toRadians(angle));
+        matrix[1][2] = 0;
+        matrix[2][0] = 0;
+        matrix[2][1] = 0;
+        matrix[2][2] = 1;
 
+        return AffineTransformation(oldpoint,matrix) ;
+    }
+
+    protected Point[] scale(Point[] oldpoint, double px, double py){
+        double[][] matrix = new double[3][3] ;
+        matrix[0][0] = px;
+        matrix[0][1] = 0;
+        matrix[0][2] = 0;
+        matrix[1][0] = 0;
+        matrix[1][1] = py;
+        matrix[1][2] = 0;
+        matrix[2][0] = 0;
+        matrix[2][1] = 0;
+        matrix[2][2] = 1;
+
+        return AffineTransformation(oldpoint,matrix) ;
+    }
+
+    protected Point[] shear(Point[] oldpoint, double px, double py){
+        double[][] matrix = new double[3][3] ;
+        matrix[0][0] = 1;
+        matrix[0][1] = px;
+        matrix[0][2] = 0;
+        matrix[1][0] = py;
+        matrix[1][1] = 1;
+        matrix[1][2] = 0;
+        matrix[2][0] = 0;
+        matrix[2][1] = 0;
+        matrix[2][2] = 1;
+
+        return AffineTransformation(oldpoint,matrix) ;
+    }
 
 
     @Override
@@ -117,10 +160,13 @@ public class MyView extends View {
 
         //do the affine transformations
 
+        //canvas.drawPath(line,bluePaint);
+        Point[] newpoints = shear(p,2,0) ;
+        newpoints = scale(newpoints,0.5,3) ;
+        newpoints = rotate(newpoints, 45) ;
+        newpoints = translate(newpoints,550,0) ;
+        updatePath(newpoints);
         canvas.drawPath(line,bluePaint);
-        Point[] l = translate(p,20,40) ;
-        updatePath(l);
-        canvas.drawPath(line,redPaint);
 
 
 
