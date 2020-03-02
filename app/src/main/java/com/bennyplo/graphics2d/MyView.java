@@ -20,6 +20,8 @@ public class MyView extends View {
     Paint bluePaint ;
     Path line ;
     Point[] p ;
+    //for centroid of polygon
+    int xi, yi ;
 
 
     public MyView(Context context) {
@@ -30,7 +32,7 @@ public class MyView extends View {
         redPaint.setColor(0xffff0000);//color red
         redPaint.setStrokeWidth(5);//set the line stroke width to 5
 
-        LinearGradient linearGradient = new LinearGradient(50,300,180,340, Color.BLUE, Color.RED, Shader.TileMode.MIRROR) ;
+        LinearGradient linearGradient = new LinearGradient(500,400,600,300, Color.BLUE, Color.RED, Shader.TileMode.MIRROR) ;
 
         bluePaint = new Paint(Paint.ANTI_ALIAS_FLAG) ;
         bluePaint.setStyle(Paint.Style.FILL_AND_STROKE);
@@ -40,12 +42,23 @@ public class MyView extends View {
         line = new Path() ;
 
         //initialize
-        int[] x = {50,150,180,240,300};
-        int[] y = {300,400,340,420,200};
+        //int[] x = {50,150,180,240,300};
+        //int[] y = {300,400,340,420,200};
+
+        int[] x = {500,500,600,600};
+        int[] y = {300,400,400,300};
+
+        //center of polygon
+        for(int i=0;i<x.length;i++){
+            xi+=x[i] ;
+            yi+=y[i] ;
+        }
+        xi = xi/x.length ;
+        yi = yi/y.length ;
 
         p = new Point[x.length] ;
         for(int i=0;i<x.length;i++){
-            p[i] = new Point(x[i],y[i]) ;
+            p[i] = new Point(x[i]-xi,y[i]-yi) ;
         }
 
 
@@ -139,7 +152,7 @@ public class MyView extends View {
         //canvas.drawCircle(500,450,50,redPaint);
         //canvas.drawCircle(300,300,250,bluePaint);
 
-        //linear gradient
+        /*//linear gradient
         int[] x = {50,150,180,240,300};
         int[] y = {300,400,340,420,200};
 
@@ -156,19 +169,24 @@ public class MyView extends View {
         int meanx = (50+160+300+380+280+100+160)/7 ;
         int meany = (300+280+380+370+450+390+380)/7 ;
         Log.d("vals",meanx+" "+meany) ;
-        //canvas.drawCircle(meanx,meany,250,redPaint);
+        //canvas.drawCircle(meanx,meany,250,redPaint);*/
 
         //do the affine transformations
 
-        //canvas.drawPath(line,bluePaint);
+       /* //canvas.drawPath(line,bluePaint);
         Point[] newpoints = shear(p,2,0) ;
         newpoints = scale(newpoints,0.5,3) ;
         newpoints = rotate(newpoints, 45) ;
         newpoints = translate(newpoints,550,0) ;
         updatePath(newpoints);
+        canvas.drawPath(line,bluePaint);*/
+
+
+       //quiz ques 2
+        Point[] rotate = rotate(p,45) ;
+        rotate = translate(rotate,xi,yi) ;
+        updatePath(rotate);
         canvas.drawPath(line,bluePaint);
-
-
 
 
 
